@@ -12,14 +12,34 @@ knitr::opts_knit$set(root.dir = "C:/Users/harrison/Dropbox/Schoolwork/Thesis/Pro
 ```
 
 
+```{r}
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+```
+
+
+
 ```{r load data}
-housing_data <- read.csv('data/processed.csv')
-head(housing_data)
+housing <- read.csv('data/processed.csv')
+head(housing)
+```
+
+
+```{r data cleaning}
+housing$DATE <- as.Date(housing$DATE, format = "%Y-%m-%d")
+head(housing)
 ```
 
 
 ```{r}
-
+housing %>%
+  pivot_longer(c(MSPUS, MSACSR, S.P.Comp., Dividend, Earnings, Consumer.Price.Index.CPI),
+               names_to = "var", values_to = "value") %>%
+  ggplot(aes(x = DATE, y = value, group = 1)) +
+  geom_line() +
+  facet_grid(vars(var), scales = "free_y") +
+  scale_x_date(date_breaks = "5 year", date_labels = "%Y")
 ```
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
