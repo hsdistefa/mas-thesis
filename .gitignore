@@ -1,0 +1,3 @@
+data/raw/store_sales/
+data/raw/*.zip
+.ipynb_checkpoints/
