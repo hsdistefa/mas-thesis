@@ -1,0 +1,28 @@
+---
+title: "Thesis EDA"
+author: "Harrison DiStefano"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+
+```{r setup}
+#knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+knitr::opts_knit$set(root.dir = "C:/Users/harrison/Dropbox/Schoolwork/Thesis/Project/")
+```
+
+
+```{r load data}
+housing_data <- read.csv('data/processed.csv')
+head(housing_data)
+```
+
+
+```{r}
+
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
