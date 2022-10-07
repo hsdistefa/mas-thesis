@@ -6,17 +6,16 @@ output:
   html_notebook: default
 ---
 
-```{r setup}
-#knitr::opts_chunk$set(warning = FALSE, message = FALSE)
-knitr::opts_knit$set(root.dir = "C:/Users/harrison/Dropbox/Schoolwork/Thesis/Project/")
-```
-
-
 ```{r}
 library(dplyr)
+library(fable)
+library(fabletools)
+library(feasts)
 library(ggplot2)
 library(tidyr)
 library(tseries)
+library(tsibble)
+library(urca)
 ```
 
 
@@ -29,12 +28,16 @@ head(housing)
 
 ```{r data cleaning}
 housing$DATE <- as.Date(housing$DATE, format = "%Y-%m-%d")
-head(housing)
+housing_ts <- housing %>%
+                select(-X) %>%  # Remove integer index
+                mutate(YearMonth = yearmonth(as.character(DATE))) %>%
+                as_tsibble(index = YearMonth)
+head(housing_ts)
 ```
 
 
 ```{r chart1}
-housing %>%
+housing_ts %>%
   pivot_longer(c(MSPUS, MSACSR),
                names_to = "var", values_to = "value") %>%
   ggplot(aes(x = DATE, y = value, group = 1)) +
@@ -45,24 +48,31 @@ housing %>%
        y = "")
 ```
 
-```{r transform prices}
+```{r differencing}
 # Make housing prices stationary
-housing$pctChangeMSPUS <- c(0, diff(log(housing$MSPUS)))  # diff log calculates symmetric % change
+housing_ts$pctChangeMSPUS <- c(0, diff(log(housing$MSPUS)))  # diff log calculates symmetric % change
                                                           # Add 0 add beginning to match row length
 
-housing %>%
+housing_ts %>%
   ggplot(aes(x = DATE, y = pctChangeMSPUS)) +
   geom_line()
 ```
 
 ```{r stationarity test}
 # Ljung-Box test for independence - stationarity
-Box.test(housing$pctChangeMSPUS, lag=25, type="Ljung-Box")
+Box.test(housing_ts$pctChangeMSPUS, lag=25, type="Ljung-Box")
 
 # Augmented Dickey-Fuller (ADF) t-statistic test for unit root
-adf.test(housing$pctChangeMSPUS)
+adf.test(housing_ts$pctChangeMSPUS)
 
 # Kwiatkowski-Phillips-Schmidt-Shin (KPSS) for level or trend stationarity
-kpss.test(housing$pctChangeMSPUS, null="Trend")
+kpss.test(housing_ts$pctChangeMSPUS, null="Trend")
+```
+
+```{r ARIMA}
+fit <- housing_ts %>%
+  fabletools::model(fable::ARIMA(pctChangeMSPUS ~ MSACSR))
+
+report(fit)
 ```
 
