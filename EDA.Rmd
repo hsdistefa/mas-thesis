@@ -16,6 +16,7 @@ knitr::opts_knit$set(root.dir = "C:/Users/harrison/Dropbox/Schoolwork/Thesis/Pro
 library(dplyr)
 library(ggplot2)
 library(tidyr)
+library(tseries)
 ```
 
 
@@ -32,17 +33,36 @@ head(housing)
 ```
 
 
-```{r}
+```{r chart1}
 housing %>%
-  pivot_longer(c(MSPUS, MSACSR, S.P.Comp., Dividend, Earnings, Consumer.Price.Index.CPI),
+  pivot_longer(c(MSPUS, MSACSR),
                names_to = "var", values_to = "value") %>%
   ggplot(aes(x = DATE, y = value, group = 1)) +
   geom_line() +
   facet_grid(vars(var), scales = "free_y") +
-  scale_x_date(date_breaks = "5 year", date_labels = "%Y")
+  scale_x_date(date_breaks = "5 year", date_labels = "%Y") +
+  labs(title = "US Housing Supply Change and Median Home Prices",
+       y = "")
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+```{r transform prices}
+# Make housing prices stationary
+housing$pctChangeMSPUS <- c(0, diff(log(housing$MSPUS)))  # diff log calculates symmetric % change
+                                                          # Add 0 add beginning to match row length
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+housing %>%
+  ggplot(aes(x = DATE, y = pctChangeMSPUS)) +
+  geom_line()
+```
+
+```{r stationarity test}
+# Ljung-Box test for independence - stationarity
+Box.test(housing$pctChangeMSPUS, lag=25, type="Ljung-Box")
+
+# Augmented Dickey-Fuller (ADF) t-statistic test for unit root
+adf.test(housing$pctChangeMSPUS)
+
+# Kwiatkowski-Phillips-Schmidt-Shin (KPSS) for level or trend stationarity
+kpss.test(housing$pctChangeMSPUS, null="Trend")
+```
+
