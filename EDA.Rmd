@@ -69,10 +69,24 @@ adf.test(housing_ts$pctChangeMSPUS)
 kpss.test(housing_ts$pctChangeMSPUS, null="Trend")
 ```
 
-```{r ARIMA}
+```{r ARIMA Regression}
 fit <- housing_ts %>%
   fabletools::model(fable::ARIMA(pctChangeMSPUS ~ MSACSR))
 
 report(fit)
+```
+
+```{r ARIMA Lagged Predictors}
+fit <- housing_ts %>%
+  model(
+    lag0 = ARIMA(pctChangeMSPUS ~ pdq(d = 0) + MSACSR),
+    lag1 = ARIMA(pctChangeMSPUS ~ pdq(d = 0) + MSACSR + lag(MSACSR)),
+    lag2 = ARIMA(pctChangeMSPUS ~ pdq(d = 0) + MSACSR + lag(MSACSR) +
+                 lag(MSACSR, 2)),
+    lag3 = ARIMA(pctChangeMSPUS ~ pdq(d = 0) + MSACSR + lag(MSACSR) +
+                 lag(MSACSR, 2) + lag(MSACSR, 3))
+  )
+
+glance(fit)
 ```
 
