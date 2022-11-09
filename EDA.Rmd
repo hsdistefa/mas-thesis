@@ -37,15 +37,23 @@ head(housing_ts)
 
 
 ```{r chart1}
+variables <- colnames(housing_ts)
+variables <- variables[-1]  # Remove date column
+
 housing_ts %>%
-  pivot_longer(c(MSPUS, MSACSR),
+  pivot_longer(c('MSPUS', 'MSACSR', 'S.P.Comp.', 'CPI', 'Long.Interest.Rate.GS10'),
                names_to = "var", values_to = "value") %>%
   ggplot(aes(x = DATE, y = value, group = 1)) +
   geom_line() +
   facet_grid(vars(var), scales = "free_y") +
   scale_x_date(date_breaks = "5 year", date_labels = "%Y") +
-  labs(title = "US Housing Supply Change and Median Home Prices",
+  labs(title = "",
        y = "")
+
+ggsave(filename = "major_variables.png",
+       path = "figures",
+       plot = last_plot(),
+       device = "png")
 ```
 
 ```{r differencing}
