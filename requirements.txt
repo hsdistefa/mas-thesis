@@ -1,5 +1,6 @@
 arch-py
 pandas
+pmdarima
 pytorch
 matplotlib
 numpy
