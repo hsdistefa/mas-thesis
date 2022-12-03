@@ -1,0 +1,98 @@
+---
+title: "Stochastic Imputation of Price Data"
+output: html_notebook
+---
+
+```{r}
+library(Amelia)
+library(dplyr)
+library(imputeTS)
+library(lubridate)
+library(mice)
+library(tsibble)
+```
+
+
+```{r load data}
+housing <- read.csv('data/processed.csv')
+head(housing)
+```
+
+```{r remove interpolated values}
+# Every second and third value was interpolated, remove these
+housing_deint <- housing %>%
+  select(-c(logdiff_MSPUS, X)) %>%  # Drop logdiff_MSPUS
+  mutate(MSPUS = if_else(row_number() %% 3 == 1, MSPUS, NaN))
+
+head(housing_deint)
+```
+```{r convert to ts data}
+housing_ts <- housing_deint %>%
+                mutate(YearMonth = yearmonth(as.character(DATE))) %>%
+                as_tsibble(index = YearMonth)
+head(housing_ts)
+```
+
+
+```{r select price data only}
+mspus <- housing_deint %>%
+           select(DATE, MSPUS)
+```
+
+```{r mice imputation}
+# Doesn't work, need time series specific implementation
+# Gives bad imputations: negative values, etc
+# Doesn't work with either just mspus, or all columns
+imp <- mice(housing_deint, method = "norm.nob", m = 1)
+data_imp <- complete(imp)
+head(data_imp, 10)
+
+plot(data_imp$MSPUS, type = "l")
+```
+```{r sample data for amelia}
+sample_data <- africa
+apply(is.na(sample_data), 2, which)
+
+sample_data[41:43, ]
+```
+
+```{r amelia imputation}
+housing_datenum <- housing_deint %>%
+                mutate(DATE = ymd(DATE)) %>%
+                mutate(DATE = as.numeric(DATE))
+
+
+am_imp <- amelia(housing_datenum, m = 1, ts = "DATE")
+head(am_imp$imputations)
+```
+
+
+```{r imputeTS cubic spline}
+cs <- na_interpolation(mspus$MSPUS, option = "spline")
+cs
+
+ggplot_na_imputations(mspus$MSPUS, cs)
+plot(na.omit(mspus$MSPUS), type = "l")
+plot(cs, type = "l")
+```
+
+
+```{r imputeTS imputation}
+ma <- na_ma(mspus$MSPUS)
+ma
+ggplot_na_imputations(mspus$MSPUS, ma)
+plot(na.omit(mspus$MSPUS), type = "l")
+plot(ma, type = "l")
+```
+
+
+```{r imputeTS imputation}
+kal <- na_kalman(mspus$MSPUS)
+kal
+
+ggplot_na_imputations(mspus$MSPUS, kal)
+```
+```{r}
+# TODO: try imputing on differenced data
+```
+

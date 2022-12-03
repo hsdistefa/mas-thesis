@@ -19,7 +19,6 @@ library(urca)
 ```
 
 
-
 ```{r load data}
 housing <- read.csv('data/processed.csv')
 head(housing)
