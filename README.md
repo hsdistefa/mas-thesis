@@ -4,6 +4,23 @@ UCLA Master's Thesis, Copyright 2022
 
 Full Paper [here](https://github.com/hsdistefa/mas-thesis/blob/master/manuscript/Harrison_DiStefano_MAS_Thesis.pdf)
 
+## Installation
+
+Install Python 3.10 and miniconda, then in a new conda environment run
+
+```
+git clone https://github.com/hsdistefa/mas-thesis
+cd mas-thesis/
+pip install -r requirements.txt
+```
+
+To run, open a new jupyter notebook by running the following in the same conda environment used for installation
+
+```
+jupyter notebook
+```
+
+Then navigate to one of the .ipynb files and run
 
 
 ## Abstract
@@ -16,6 +33,9 @@ We use a multivariate LSTM neural network to model housing prices across time us
 ![LSTM Architecture](figures/lstm_architecture4.png)
 
 Where the circles with diagonal lines represent standard LSTM memory cells with input, output, and forget gates.
+
+
+## Results
 
 
 
