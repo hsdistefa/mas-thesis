@@ -3,3 +3,6 @@ data/raw/*.zip
 .ipynb_checkpoints/
 figures/*.psd
 References/
+manuscript/Harrison_DiStefano_MAS_Thesis\ v*.pdf
+manuscript/raw_latex/*.zip
+manuscript/raw_latex/2022-11-18/
