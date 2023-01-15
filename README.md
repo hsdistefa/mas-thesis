@@ -44,7 +44,19 @@ Links to data sources:
 - [Monthly Supply of New Houses in the United States](https://fred.stlouisfed.org/series/MSACSR)
 - [Economic Data](http://www.econ.yale.edu/~shiller/data.htm)
 
+## Methodology
 
+We first massage the data into a single dataframe. We use cubic spline interpolation to change the quarterly price data into monthly data to match all other economic data, we do this to keep as many data rows as possible for the neural network. Then the beginning and end of the economic data are removed to match the size of the price data, columns that may leak future information are removed, and the rows containing last few null values found in 2022 are removed. In the end we are left with 708 rows of monthly data and 18 feature columns from 1969 to 2021.
+
+The time series is then differenced using logarithmic differencing on most of the columns to achieve stationerity of the data. 
+
+The transformed data is then split into 95/5 train/test sets at a cutoff date such that the first 95% of months will be used to train the model, and the forecasting results will be tested against the last 5%.
+
+Finally, to minimize the effects of columns with wide ranges on the model, we perform standardization on the economic data (feature) columns and min-max normalization on the price (target) column. 
+
+This process is summarized in the following diagram:
+
+![Data Processing Diagram](figures/train_test_split2.png)
 
 ## Model Architecture
 
