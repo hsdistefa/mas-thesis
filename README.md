@@ -66,6 +66,8 @@ We use a multivariate LSTM neural network to model housing prices across time us
 
 Where the circles with diagonal lines represent standard LSTM memory cells with input, output, and forget gates.
 
+The LSTM is then trained using an Adam optimizer for back-propogation.
+
 
 ## Results
 
