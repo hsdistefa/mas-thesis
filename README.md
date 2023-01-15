@@ -71,6 +71,20 @@ The LSTM is then trained using an Adam optimizer for back-propogation.
 
 ## Results
 
+The LSTM model is run to forecast
+
+The figure below shows the LSTM model forecasts
+
+![LSTM Results](figures/scale_actual_vs_pred_best.png)
+
+This is compared to a standard ARIMA model using grid search for hyperparameters
+
+![ARIMA Comparison](figures/arima_scale_actual_vs_pred.png)
+
+And the model errors can be compared in this table:
+
+![Model Errors](figures/table_error_comparison.png)
+
 
 
 
