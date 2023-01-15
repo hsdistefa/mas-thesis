@@ -85,7 +85,7 @@ And the model errors can be compared in this table:
 
 ![Model Errors](figures/table_error_comparison.png)
 
-
+With root-mean-square error (RMSE) and standard error measures, we see a 20% improvement in predicting housing prices using an LSTM over the standard ARIMA model.
 
 
 
