@@ -34,6 +34,10 @@ Economic data is taken from Robert Shiller's data set used in his book **Irratio
 
 ![Data Details](figures/data_info_table.png)
 
+Below is a plot of the housing sales prices.
+
+![U.S. Median Sales Price of Houses Sold](figures/MSPUS_pandas.png)
+
 Links to data sources:
 
 - [Median Sales Price of Houses Sold for the United States](https://fred.stlouisfed.org/series/MSPUS)
